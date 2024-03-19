@@ -1,6 +1,6 @@
 # Redpandas_kafka_Transactions
 
-## 1.  Redpanda,Redis and Spark Docker Compose Setup
+## Redpanda,Redis and Spark Docker Compose Setup
 
 This Docker Compose file defines services for running Redpanda and Redis containers.
 
@@ -63,5 +63,8 @@ This Docker Compose file defines services for running Redpanda and Redis contain
 
 ## Task 1
 1. To create the topic run the following command:  `sudo docker exec -it redpanda rpk topic create transactions --partitions 2 --topic-config retention.ms=86400000`
+2. To create the user:  `sudo docker exec -it redpanda rpk acl create --allow-principal User:abhi --operation All --cluster --topic transactions`
+3. To register the schema we need to define the avro format of the schema in the `constants.py` and run the script `schema.py` this will register the schema in Schema Registry
+4. Check the topic and registered schema in the redpanda console which can be accessed by the following url:  `http://localhost:8080`
 
 
