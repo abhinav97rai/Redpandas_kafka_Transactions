@@ -63,8 +63,14 @@ This Docker Compose file defines services for running Redpanda and Redis contain
 
 ## Task 1
 1. To create the topic run the following command:  `sudo docker exec -it redpanda rpk topic create transactions --partitions 2 --topic-config retention.ms=86400000`
-2. To create the user:  `sudo docker exec -it redpanda rpk acl create --allow-principal User:abhi --operation All --cluster --topic transactions`
-3. To register the schema we need to define the avro format of the schema in the `constants.py` and run the script `schema.py` this will register the schema in Schema Registry
-4. Check the topic and registered schema in the redpanda console which can be accessed by the following url:  [http://localhost:8080](http://localhost:8080)
+2. To create the user:
+    - `sudo docker exec -it redpanda rpk acl create --allow-principal User:transactions-backup-job-user --operation All --cluster --topic transactions`
+    - `sudo docker exec -it redpanda rpk acl create --allow-principal User:transactions-ml-features-job-user --operation All --cluster --topic transactions`
+4. To register the schema we need to define the avro format of the schema in the `constants.py` and run the script `schema.py` this will register the schema in Schema Registry
+5. Check the topic, users and registered schema in the redpanda console which can be accessed by the following url:  [http://localhost:8080](http://localhost:8080)
+
+![Screenshot from 2024-03-20 00-29-38](https://github.com/abhinav97rai/Redpandas_kafka_Transactions/assets/40785548/b6f69954-235a-4ece-8e0f-6e9c9351d811)
+![Screenshot from 2024-03-20 00-31-12](https://github.com/abhinav97rai/Redpandas_kafka_Transactions/assets/40785548/cb468f85-c23a-4bf3-95ae-260f122746a3)
+![Screenshot from 2024-03-20 00-34-42](https://github.com/abhinav97rai/Redpandas_kafka_Transactions/assets/40785548/a7f13163-6c23-4d28-ae89-1fd6acff17ff)
 
 
