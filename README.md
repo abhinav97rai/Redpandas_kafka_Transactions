@@ -73,4 +73,9 @@ This Docker Compose file defines services for running Redpanda and Redis contain
 ![Screenshot from 2024-03-20 00-31-12](https://github.com/abhinav97rai/Redpandas_kafka_Transactions/assets/40785548/cb468f85-c23a-4bf3-95ae-260f122746a3)
 ![Screenshot from 2024-03-20 00-34-42](https://github.com/abhinav97rai/Redpandas_kafka_Transactions/assets/40785548/a7f13163-6c23-4d28-ae89-1fd6acff17ff)
 
+## Task 2
+1. Ensure that Kafka and Schema Registry services are running and accessible at the specified URLs (`kafka_url` and `schema_registry_url`).
+2. Modify the `kafka_url`, `schema_registry_url`, `kafka_topic`, and `schema_registry_subject` variables to match your Kafka and Schema Registry configurations(or use the variable that are provided in the script).
+3. Run the script using Python: `kafka_produce.py`
+4. The script will generate 10 random transaction objects and produce them to the specified Kafka topic `transactions` in Avro format.
 
