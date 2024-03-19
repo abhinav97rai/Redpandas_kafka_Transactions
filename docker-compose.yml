@@ -1,0 +1,81 @@
+version: '3.7'
+
+# x-spark-common: &spark-common
+#   # image: bitnami/spark:latest
+#   build:
+#     context: .
+#     dockerfile: Dockerfile
+#   restart: unless-stopped
+#   volumes:
+#     - ./jobs:/opt/bitnami/spark/jobs
+
+services:
+  
+  redpanda:
+    image: docker.redpanda.com/redpandadata/redpanda:v23.3.5
+    container_name: redpanda
+    command:
+      - redpanda start
+      - --smp 1
+      - --overprovisioned
+      - --kafka-addr internal://0.0.0.0:9092,external://0.0.0.0:19092
+      - --advertise-kafka-addr internal://redpanda:9092,external://localhost:19092
+      - --pandaproxy-addr internal://0.0.0.0:8082,external://0.0.0.0:18082
+      - --advertise-pandaproxy-addr internal://redpanda:8082,external://localhost:18082
+      - --schema-registry-addr internal://0.0.0.0:8081,external://0.0.0.0:18081
+    ports:
+      - 18081:18081
+      - 18082:18082
+      - 19092:19092
+  
+  redpanda-console:
+    image: docker.redpanda.com/redpandadata/console:v2.4.3
+    container_name: redpanda-console
+    entrypoint: /bin/sh
+    command: -c "echo \"$$CONSOLE_CONFIG_FILE\" > /tmp/config.yml; /app/console"
+    environment:
+      CONFIG_FILEPATH: /tmp/config.yml
+      CONSOLE_CONFIG_FILE: |
+        kafka:
+          brokers: ["redpanda:9092"]
+          schemaRegistry:
+            enabled: true
+            urls: ["http://redpanda:8081"]
+        redpanda:
+          adminApi:
+            enabled: true
+            urls: ["http://redpanda:9644"]
+    ports:
+      - 8080:8080
+    depends_on:
+      - redpanda
+
+  redis:
+    image: redis:latest
+    ports:
+      - '6379:6379'
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 30s
+      retries: 50
+      start_period: 30s
+    restart: always
+  
+  # spark-master:
+  #   <<: *spark-common
+  #   command: bin/spark-class org.apache.spark.deploy.master.Master
+  #   ports:
+  #     - "8088:8088"
+  #     - "7077:7077"
+  #     - "3306:3306"
+  # spark-worker:
+  #   <<: *spark-common
+  #   command: bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
+  #   depends_on:
+  #     - spark-master
+  #   environment:
+  #     SPARK_MODE: worker
+  #     SPARK_WORKER_CORES: 1
+  #     SPARK_WORKER_MEMORY: 2g
+  #     SPARK_MASTER_URL: spark://spark-master:7077
